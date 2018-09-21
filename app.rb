@@ -39,11 +39,12 @@ post '/new' do
 	# получаем переменную из пост запроса
 	@content = params[:content]
 
-	#проверка на пустое значение 
+	# проверка на пустое значение 
 	if @content.size == 0
 		@error = 'Type text'
 		erb :new
 	else
+		# сщхранение данных в БД
 		@db.execute 'INSERT INTO Posts (created_data, content) VALUES (datetime(), ?)', [@content]
 		erb "You tiped #{@content}"
 	end
