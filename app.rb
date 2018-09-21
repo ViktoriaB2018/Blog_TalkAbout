@@ -49,6 +49,8 @@ post '/new' do
 	else
 		# сщхранение данных в БД
 		@db.execute 'INSERT INTO Posts (created_data, content) VALUES (datetime(), ?)', [@content]
-		erb "You tiped #{@content}"
+		
+		# перенаправление на главную страницу
+		redirect to '/'
 	end
 end
