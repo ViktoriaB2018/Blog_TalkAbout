@@ -8,6 +8,15 @@
 
 <br>
 <h4>Comments:</h4>	
+<br>
+<% @comments.each do |com| %>
+		<p>
+		<i> <%= com['content'] %> </i>
+		<br>
+		<br>
+		<span style="font-size: 75%; color: #999">Added at: <%= com['created_data'] %></span>
+		<hr />
+<% end %>
 
 <form action="/details/<%= @row['id'] %>" method="POST">
   <div class="form-group">
