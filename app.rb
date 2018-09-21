@@ -44,6 +44,7 @@ post '/new' do
 		@error = 'Type text'
 		erb :new
 	else
+		@db.execute 'INSERT INTO Posts (created_data, content) VALUES (datetime(), ?)', [@content]
 		erb "You tiped #{@content}"
 	end
 end
