@@ -21,6 +21,8 @@ configure do
 
 	# создать таблицу, если таблицы не существует
 	@db.execute 'CREATE TABLE IF NOT EXISTS Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, created_data DATA, content TEXT NOT NULL)'
+
+	@db.execute 'CREATE TABLE IF NOT EXISTS Comments (id INTEGER PRIMARY KEY AUTOINCREMENT, created_data DATA, content TEXT NOT NULL, post_id INTEGER)'
 end
 
 get '/' do
