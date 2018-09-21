@@ -24,7 +24,10 @@ configure do
 end
 
 get '/' do
-	erb "Hello!"	
+	# выводим список постов из БД
+	@result = @db.execute 'SELECT * FROM Posts order by id desc'
+
+	erb :index
 end
 
 # обработчик get-запроса /new
