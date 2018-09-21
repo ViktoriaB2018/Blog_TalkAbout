@@ -20,9 +20,9 @@ configure do
 	init_db
 
 	# создать таблицу, если таблицы не существует
-	@db.execute 'CREATE TABLE IF NOT EXISTS Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, created_data DATA, content TEXT NOT NULL)'
+	@db.execute 'CREATE TABLE IF NOT EXISTS Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, created_data DATA, content)'
 
-	@db.execute 'CREATE TABLE IF NOT EXISTS Comments (id INTEGER PRIMARY KEY AUTOINCREMENT, created_data DATA, content TEXT NOT NULL, post_id INTEGER)'
+	@db.execute 'CREATE TABLE IF NOT EXISTS Comments (id INTEGER PRIMARY KEY AUTOINCREMENT, created_data DATA, content, post_id INTEGER)'
 end
 
 get '/' do
@@ -49,7 +49,7 @@ post '/new' do
 		@error = 'Type text'
 		erb :new
 	else
-		# сщхранение данных в БД
+		# сохранение данных в БД
 		@db.execute 'INSERT INTO Posts (created_data, content) VALUES (datetime(), ?)', [@content]
 		
 		# перенаправление на главную страницу
@@ -78,6 +78,12 @@ post '/details/:post_id' do
 	# получаем переменную из url'а
 	post_id = params[:post_id]
 
-	@comment = params[:comment]
-	erb "You put comment for post with id #{post_id} - #{@comment}"
+	content = params[:comment]
+
+	# сохранение данных в БД
+	@db.execute 'INSERT INTO Comments (created_data, content, post_id) VALUES (datetime(), ?, ?)', [content, post_id]
+		
+	# перенаправление на страницу поста
+	redirect to('/details/' + post_id)
+
 end
