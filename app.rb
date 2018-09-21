@@ -38,5 +38,12 @@ end
 post '/new' do
 	# получаем переменную из пост запроса
 	@content = params[:content]
-	erb "You tiped #{@content}"
+
+	#проверка на пустое значение 
+	if @content.size == 0
+		@error = 'Type text'
+		erb :new
+	else
+		erb "You tiped #{@content}"
+	end
 end
