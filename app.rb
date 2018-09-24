@@ -20,9 +20,9 @@ configure do
 	init_db
 
 	# создать таблицу, если таблицы не существует
-	@db.execute 'CREATE TABLE IF NOT EXISTS Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, created_data DATA, content)'
+	@db.execute 'CREATE TABLE IF NOT EXISTS Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, created_data DATA, name, content)'
 
-	@db.execute 'CREATE TABLE IF NOT EXISTS Comments (id INTEGER PRIMARY KEY AUTOINCREMENT, created_data DATA, content, post_id INTEGER)'
+	@db.execute 'CREATE TABLE IF NOT EXISTS Comments (id INTEGER PRIMARY KEY AUTOINCREMENT, created_data DATA, comment, post_id INTEGER)'
 end
 
 get '/' do
@@ -43,14 +43,19 @@ end
 post '/new' do
 	# получаем переменную из пост запроса
 	@content = params[:content]
+	@name = params[:name]
 
-	# проверка на пустое значение 
-	if @content.size == 0
-		@error = 'Type text'
-		erb :new
+	# хеш для валидации
+	hh = { 	:content => 'Type your text',
+			:name => 'Type your name' }
+
+	@error = hh.select {|key,_| params[key] == ""}.values.join(", ")
+
+	if @error != ""
+		return erb :new
 	else
 		# сохранение данных в БД
-		@db.execute 'INSERT INTO Posts (created_data, content) VALUES (datetime(), ?)', [@content]
+		@db.execute 'INSERT INTO Posts (created_data, name, content) VALUES (datetime(), ?, ?)', [@name, @content]
 		
 		# перенаправление на главную страницу
 		redirect to '/'
@@ -81,12 +86,18 @@ post '/details/:post_id' do
 	# получаем переменную из url'а
 	post_id = params[:post_id]
 
-	content = params[:comment]
+	comment = params[:comment]
 
-	# сохранение данных в БД
-	@db.execute 'INSERT INTO Comments (created_data, content, post_id) VALUES (datetime(), ?, ?)', [content, post_id]
-		
-	# перенаправление на страницу поста
-	redirect to('/details/' + post_id)
+	# валидация 
+	if comment.size == 0
+		@error = 'Type comment'
+		redirect to('/details/' + post_id)
+	else
+		# сохранение данных в БД
+		@db.execute 'INSERT INTO Comments (created_data, comment, post_id) VALUES (datetime(), ?, ?)', [comment, post_id]
+			
+		# перенаправление на страницу поста
+		redirect to('/details/' + post_id)
+	end
 
 end
