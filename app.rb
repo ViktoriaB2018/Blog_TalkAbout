@@ -85,13 +85,13 @@ end
 post '/details/:post_id' do
 	# получаем переменную из url'а
 	post_id = params[:post_id]
-
 	comment = params[:comment]
 
 	# валидация 
 	if comment.size == 0
 		@error = 'Type comment'
-		redirect to('/details/' + post_id)
+
+		get '/details/:post_id'
 	else
 		# сохранение данных в БД
 		@db.execute 'INSERT INTO Comments (created_data, comment, post_id) VALUES (datetime(), ?, ?)', [comment, post_id]
