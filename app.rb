@@ -91,7 +91,13 @@ post '/details/:post_id' do
 	if comment.size == 0
 		@error = 'Type comment'
 
-		get '/details/:post_id'
+		@results = @db.execute 'SELECT * FROM Posts where id = ?', [post_id]
+
+		@row = @results[0]
+
+		@comments = @db.execute 'SELECT * FROM Comments where post_id = ? order by id', [post_id]
+
+		erb :details
 	else
 		# сохранение данных в БД
 		@db.execute 'INSERT INTO Comments (created_data, comment, post_id) VALUES (datetime(), ?, ?)', [comment, post_id]
